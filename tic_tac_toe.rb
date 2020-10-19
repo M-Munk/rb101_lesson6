@@ -35,6 +35,25 @@ def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
 
+def joinor(empty, punctuation = ', ', ending = 'or')
+  joined = ''
+  len = empty.size
+
+  empty.each.with_index do |word, index|
+    case len
+    when 1
+      joined << word.to_s
+      break
+    when 2
+      joined << "#{word} " unless index == len - 1
+    else
+      joined << "#{word}#{punctuation}" unless index == len - 1
+    end
+    joined << "#{ending} #{word}" if index == len - 1
+  end
+  joined
+end
+
 def initialize_board
   new_board = {}
   (1..9).each { |num| new_board[num] = INITIAL_MARKER }
@@ -44,7 +63,7 @@ end
 def player_places_piece!(brd)
   square = ''
   loop do
-    prompt "Choose a square (#{empty_squares(brd).join(', ')}): "
+    prompt "Choose a square (#{joinor(empty_squares(brd))}): "
     square = gets.chomp.to_i
     if empty_squares(brd).include?(square)
       break
