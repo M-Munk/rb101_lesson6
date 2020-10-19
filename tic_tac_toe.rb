@@ -79,6 +79,20 @@ def detect_winner(brd)
   nil
 end
 
+def display_outcome(brd)
+  if someone_won?(brd)
+    prompt "#{detect_winner(brd)} won!"
+  else
+    prompt "It's a tie!"
+  end
+end
+
+def play_again?
+  prompt "Play again? (y or n)"
+  answer = gets.chomp
+  answer.downcase == 'y' || answer.downcase == 'yes'
+end
+
 loop do
   board = initialize_board
   display_board(board)
@@ -92,16 +106,8 @@ loop do
   end
 
   display_board(board)
-
-  if someone_won?(board)
-    prompt "#{detect_winner(board)} won!"
-  else
-    prompt "It's a tie!"
-  end
-
-  prompt "Play again? (y or n)"
-  answer = gets.chomp
-  break unless answer.downcase.start_with?('y')
+  display_outcome(board)
+  break unless play_again?
 end
 
 prompt "Thanks for playing Tic Tac Toe! Goodbye."
