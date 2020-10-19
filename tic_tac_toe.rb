@@ -14,7 +14,7 @@ end
 # rubocop:disable Metrics/AbcSize
 def display_board(brd)
   system 'clear'
-  puts "You are #{PLAYER_MARKER}"
+  puts "    You are #{PLAYER_MARKER}"
   puts ""
   puts "     |     |"
   puts "  #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
@@ -106,27 +106,77 @@ def display_outcome(brd)
   end
 end
 
+def initialize_scoreboard
+  { player: 0, computer: 0 }
+end
+
+def update_score!(scrbrd, brd)
+  winner = detect_winner(brd).downcase.to_sym
+  scrbrd[winner] += 1
+end
+
+def display_score(scrbrd)
+  puts "Match Score:"
+  puts "Player: #{scrbrd[:player]}"
+  puts "Computer: #{scrbrd[:computer]}"
+  display_match_winner(scrbrd) if match_over?(scrbrd)
+  puts ""
+end
+
+def match_winner(scrbrd)
+  if scrbrd[:player] == 5
+    return 'Player'
+  elsif scrbrd[:computer] == 5
+    return 'Computer'
+  end
+  nil
+end
+
+def match_over?(scrbrd)
+  !!match_winner(scrbrd)
+end
+
+def display_match_winner(scrbrd)
+  puts "#{match_winner(scrbrd)} wins this match!"
+end
+
 def play_again?
   prompt "Play again? (y or n)"
   answer = gets.chomp
   answer.downcase == 'y' || answer.downcase == 'yes'
 end
 
-loop do
-  board = initialize_board
-  display_board(board)
-
-  loop do
-    display_board(board)
-    player_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
-    computer_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
-  end
-
-  display_board(board)
-  display_outcome(board)
-  break unless play_again?
+def another_match?
+  prompt "Would you like to play another match?"
+  answer = gets.chomp
+  answer.downcase == 'y' || answer.downcase == 'yes'
 end
 
+loop do
+  score = initialize_scoreboard
+  loop do
+    board = initialize_board
+    display_board(board)
+    display_score(score)
+
+    loop do
+      display_board(board)
+      display_score(score)
+      player_places_piece!(board)
+      break if someone_won?(board) || board_full?(board)
+      computer_places_piece!(board)
+      break if someone_won?(board) || board_full?(board)
+    end
+
+    update_score!(score, board)
+    display_board(board)
+    display_score(score)
+    display_outcome(board)
+    break unless play_again?
+    break if match_over?
+  end
+
+  display_score(score)
+  break unless another_match?
+end
 prompt "Thanks for playing Tic Tac Toe! Goodbye."
