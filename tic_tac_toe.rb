@@ -74,8 +74,29 @@ def player_places_piece!(brd)
   brd[square] = PLAYER_MARKER
 end
 
+def computer_defense_move(brd)
+  move_line = []
+  WINNING_LINES.each do |line|
+    if brd.values_at(*line).count(PLAYER_MARKER) == 2 &&
+       brd.values_at(*line).count(INITIAL_MARKER) == 1
+      move_line = line
+      break
+    end
+  end
+  return nil if move_line.empty?
+  move_line.select { |num| brd[num] == ' ' }.join.to_i
+end
+
+def should_computer_defend?(brd)
+  !!computer_defense_move(brd)
+end
+
 def computer_places_piece!(brd)
-  square = empty_squares(brd).sample
+  square = if should_computer_defend?(brd)
+             computer_defense_move(brd)
+           else
+             empty_squares(brd).sample
+           end
   brd[square] = COMPUTER_MARKER
 end
 
@@ -107,18 +128,23 @@ def display_outcome(brd)
 end
 
 def initialize_scoreboard
-  { player: 0, computer: 0 }
+  { player: 0, computer: 0, ties: 0 }
 end
 
 def update_score!(scrbrd, brd)
-  winner = detect_winner(brd).downcase.to_sym
-  scrbrd[winner] += 1
+  if someone_won?(brd)
+    winner = detect_winner(brd).downcase.to_sym
+    scrbrd[winner] += 1
+  else 
+    scrbrd[:ties] += 1
+  end
 end
 
 def display_score(scrbrd)
   puts "Match Score:"
   puts "Player: #{scrbrd[:player]}"
   puts "Computer: #{scrbrd[:computer]}"
+  puts "Ties: #{scrbrd[:ties]}"
   display_match_winner(scrbrd) if match_over?(scrbrd)
   puts ""
 end
@@ -152,21 +178,21 @@ def another_match?
   answer.downcase == 'y' || answer.downcase == 'yes'
 end
 
-loop do  # match loop
+loop do
   score = initialize_scoreboard
-  loop do # game loop
+  loop do
     board = initialize_board
     display_board(board)
     display_score(score)
 
-    loop do # play loop
+    loop do
       display_board(board)
       display_score(score)
       player_places_piece!(board)
       break if someone_won?(board) || board_full?(board)
       computer_places_piece!(board)
       break if someone_won?(board) || board_full?(board)
-    end  # play loop end
+    end
 
     update_score!(score, board)
     display_board(board)
@@ -174,8 +200,8 @@ loop do  # match loop
     display_outcome(board)
     break if match_over?(score)
     break unless play_again?
-  end  # game loop end
+  end
 
   break unless another_match?
-end  # match loop end
+end
 prompt "Thanks for playing Tic Tac Toe! Goodbye."
