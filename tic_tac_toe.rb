@@ -147,36 +147,35 @@ def play_again?
 end
 
 def another_match?
-  prompt "Would you like to play another match?"
+  prompt "Would you like to play another match? (y or n)"
   answer = gets.chomp
   answer.downcase == 'y' || answer.downcase == 'yes'
 end
 
-loop do
+loop do  # match loop
   score = initialize_scoreboard
-  loop do
+  loop do # game loop
     board = initialize_board
     display_board(board)
     display_score(score)
 
-    loop do
+    loop do # play loop
       display_board(board)
       display_score(score)
       player_places_piece!(board)
       break if someone_won?(board) || board_full?(board)
       computer_places_piece!(board)
       break if someone_won?(board) || board_full?(board)
-    end
+    end  # play loop end
 
     update_score!(score, board)
     display_board(board)
     display_score(score)
     display_outcome(board)
+    break if match_over?(score)
     break unless play_again?
-    break if match_over?
-  end
+  end  # game loop end
 
-  display_score(score)
   break unless another_match?
-end
+end  # match loop end
 prompt "Thanks for playing Tic Tac Toe! Goodbye."
