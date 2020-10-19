@@ -36,7 +36,7 @@ def computer_defense_move(brd)
     end
   end
   return nil if move_line.empty?
-  move_line_select { |num| brd[num] == ' ' }.join.to_i
+  move_line.select { |num| brd[num] == ' ' }.join.to_i
 end
 
 def should_computer_defend?(brd)
