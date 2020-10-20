@@ -235,6 +235,7 @@ end
 loop do
   current_player = first_player
   score = initialize_scoreboard
+
   loop do
     board = initialize_board
     display_game_info(board, score)
