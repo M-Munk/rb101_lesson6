@@ -188,6 +188,10 @@ def valid_answer?(ans)
   %w(y yes n no).include?(ans.downcase)
 end
 
+def valid_yes?(ans)
+  %w(y yes).include?(ans.downcase)
+end
+
 def user_answer
   loop do
     answer = gets.chomp
@@ -199,20 +203,20 @@ end
 def play_again?
   prompt "Would you like to play again? (y or n)"
   answer = user_answer
-  %w(y yes).include?(answer.downcase)
+  valid_yes?(answer)
 end
 
 def another_match?
   prompt "Would you like to play another match? (y or n)"
   answer = user_answer
-  %w(y yes).include?(answer.downcase)
+  valid_yes?(answer)
 end
 
 def go_first?
   system 'clear'
   prompt "Would you like to move first? (y or n)"
   answer = user_answer
-  %w(y yes).include?(answer.downcase)
+  valid_yes?(answer)
 end
 
 def first_player
