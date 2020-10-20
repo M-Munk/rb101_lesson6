@@ -14,7 +14,7 @@ end
 # rubocop:disable Metrics/AbcSize
 def display_board(brd)
   system 'clear'
-  puts "    You are #{PLAYER_MARKER}"
+  puts " ** You are #{PLAYER_MARKER} **"
   puts ""
   puts "     |     |"
   puts "  #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
@@ -248,6 +248,10 @@ def display_game_info(brd, scrbrd)
   display_score(scrbrd)
 end
 
+def display_goodbye
+  prompt "Thanks for playing Tic Tac Toe! Goodbye."
+end
+
 # Game Loop
 
 loop do
@@ -274,4 +278,4 @@ loop do
 
   break unless another_match?
 end
-prompt "Thanks for playing Tic Tac Toe! Goodbye."
+display_goodbye
