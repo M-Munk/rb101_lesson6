@@ -84,7 +84,7 @@ def computer_choose_move(brd, marker)
     end
   end
   return nil if move_line.empty?
-  move_line.select { |num| brd[num] == ' ' }.join.to_i
+  move_line.select { |num| brd[num] == INITIAL_MARKER }.join.to_i
 end
 
 def should_computer_attack?(brd)
@@ -95,8 +95,12 @@ def should_computer_defend?(brd)
   !!computer_choose_move(brd, PLAYER_MARKER)
 end
 
+def computer_picks_random(brd)
+  empty_squares(brd).sample
+end
+
 def middle_is_open?(brd)
-  brd[5] == ' '
+  brd[5] == INITIAL_MARKER
 end
 
 def computer_places_piece!(brd)
@@ -107,7 +111,7 @@ def computer_places_piece!(brd)
            elsif middle_is_open?(brd)
              5
            else
-             empty_squares(brd).sample
+             computer_picks_random(brd)
            end
   brd[square] = COMPUTER_MARKER
 end
@@ -179,7 +183,7 @@ def display_match_winner(scrbrd)
 end
 
 def play_again?
-  prompt "Play again? (y or n)"
+  prompt "Would you like to play again? (y or n)"
   answer = gets.chomp
   answer.downcase == 'y' || answer.downcase == 'yes'
 end
@@ -190,27 +194,60 @@ def another_match?
   answer.downcase == 'y' || answer.downcase == 'yes'
 end
 
+def go_first?
+  system 'clear'
+  prompt "Would you like to move first? (y/n)"
+  answer = gets.chomp
+  answer.downcase == 'y' || answer.downcase == 'yes'
+end
+
+def first_player
+  if go_first?
+    :player
+  else
+    :computer
+  end
+end
+
+def alternate_player(player)
+  if player == :player
+    :computer
+  else
+    :player
+  end
+end
+
+def place_piece!(player, brd)
+  if player == :player
+    player_places_piece!(brd)
+  else
+    computer_places_piece!(brd)
+  end
+end
+
+def display_game_info(brd, scrbrd)
+  display_board(brd)
+  display_score(scrbrd)
+end
+
 # Game Loop
 
 loop do
+  current_player = first_player
   score = initialize_scoreboard
   loop do
     board = initialize_board
-    display_board(board)
-    display_score(score)
+    display_game_info(board, score)
 
     loop do
-      display_board(board)
-      display_score(score)
-      player_places_piece!(board)
+      place_piece!(current_player, board)
+      current_player = alternate_player(current_player)
       break if someone_won?(board) || board_full?(board)
-      computer_places_piece!(board)
-      break if someone_won?(board) || board_full?(board)
+      display_game_info(board, score)
     end
 
     update_score!(score, board)
-    display_board(board)
-    display_score(score)
+    display_game_info(board, score)
     display_outcome(board)
     break if match_over?(score)
     break unless play_again?
