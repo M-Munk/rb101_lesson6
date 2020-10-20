@@ -1,5 +1,3 @@
-require 'pry'
-
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
@@ -264,8 +262,8 @@ end
 
 # Game Loop
 
+display_greeting
 loop do
-  display_greeting
   current_player = first_player
   score = initialize_scoreboard
 
