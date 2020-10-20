@@ -74,10 +74,10 @@ def player_places_piece!(brd)
   brd[square] = PLAYER_MARKER
 end
 
-def computer_attack_move(brd)
+def computer_choose_move(brd, marker)
   move_line = []
   WINNING_LINES.each do |line|
-    if brd.values_at(*line).count(COMPUTER_MARKER) == 2 &&
+    if brd.values_at(*line).count(marker) == 2 &&
        brd.values_at(*line).count(INITIAL_MARKER) == 1
       move_line = line
       break
@@ -88,24 +88,11 @@ def computer_attack_move(brd)
 end
 
 def should_computer_attack?(brd)
-  !!computer_attack_move(brd)
-end
-
-def computer_defense_move(brd)
-  move_line = []
-  WINNING_LINES.each do |line|
-    if brd.values_at(*line).count(PLAYER_MARKER) == 2 &&
-       brd.values_at(*line).count(INITIAL_MARKER) == 1
-      move_line = line
-      break
-    end
-  end
-  return nil if move_line.empty?
-  move_line.select { |num| brd[num] == ' ' }.join.to_i
+  !!computer_choose_move(brd, COMPUTER_MARKER)
 end
 
 def should_computer_defend?(brd)
-  !!computer_defense_move(brd)
+  !!computer_choose_move(brd, PLAYER_MARKER)
 end
 
 def middle_is_open?(brd)
@@ -114,9 +101,9 @@ end
 
 def computer_places_piece!(brd)
   square = if should_computer_attack?(brd)
-             computer_attack_move(brd)
+             computer_choose_move(brd, COMPUTER_MARKER)
            elsif should_computer_defend?(brd)
-             computer_defense_move(brd)
+             computer_choose_move(brd, PLAYER_MARKER)
            elsif middle_is_open?(brd)
              5
            else
