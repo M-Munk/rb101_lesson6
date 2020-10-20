@@ -108,11 +108,17 @@ def should_computer_defend?(brd)
   !!computer_defense_move(brd)
 end
 
+def middle_is_open?(brd)
+  brd[5] == ' '
+end
+
 def computer_places_piece!(brd)
   square = if should_computer_attack?(brd)
              computer_attack_move(brd)
            elsif should_computer_defend?(brd)
              computer_defense_move(brd)
+           elsif middle_is_open?(brd)
+             5
            else
              empty_squares(brd).sample
            end
@@ -196,6 +202,8 @@ def another_match?
   answer = gets.chomp
   answer.downcase == 'y' || answer.downcase == 'yes'
 end
+
+# Game Loop
 
 loop do
   score = initialize_scoreboard
