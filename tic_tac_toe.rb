@@ -6,6 +6,8 @@ COMPUTER_MARKER = 'O'
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
                 [[1, 5, 9], [3, 5, 7]] # diagonals
+WINNING_SCORE = 5
+MIDDLE_SPACE = 5
 
 def prompt(msg)
   puts "=> #{msg}"
@@ -111,7 +113,7 @@ def computer_places_piece!(brd)
            elsif should_computer_defend?(brd)
              computer_choose_move(brd, PLAYER_MARKER)
            elsif middle_is_open?(brd)
-             5
+             MIDDLE_SPACE
            else
              computer_picks_random(brd)
            end
@@ -168,9 +170,9 @@ def display_score(scrbrd)
 end
 
 def match_winner(scrbrd)
-  if scrbrd[:player] == 5
+  if scrbrd[:player] == WINNING_SCORE
     return 'Player'
-  elsif scrbrd[:computer] == 5
+  elsif scrbrd[:computer] == WINNING_SCORE
     return 'Computer'
   end
   nil
@@ -213,7 +215,6 @@ def another_match?
 end
 
 def go_first?
-  system 'clear'
   prompt "Would you like to move first? (y or n)"
   answer = user_answer
   valid_yes?(answer)
@@ -248,6 +249,15 @@ def display_game_info(brd, scrbrd)
   display_score(scrbrd)
 end
 
+def display_greeting
+  system 'clear'
+  prompt "Welcome to Tic-Tac-Toe"
+  prompt "The first player to win #{WINNING_SCORE} games"
+  prompt "will win the match!"
+  prompt "Good Luck!"
+  puts ""
+end
+
 def display_goodbye
   prompt "Thanks for playing Tic Tac Toe! Goodbye."
 end
@@ -255,6 +265,7 @@ end
 # Game Loop
 
 loop do
+  display_greeting
   current_player = first_player
   score = initialize_scoreboard
 
