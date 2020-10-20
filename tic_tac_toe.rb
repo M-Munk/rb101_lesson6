@@ -184,23 +184,35 @@ def display_match_winner(scrbrd)
   puts "#{match_winner(scrbrd)} wins this match!"
 end
 
+def valid_answer?(ans)
+  %w(y yes n no).include?(ans.downcase)
+end
+
+def user_answer
+  loop do
+    answer = gets.chomp
+    return answer if valid_answer?(answer)
+    prompt "I'm sorry, I don't understand your answer."
+  end
+end
+
 def play_again?
   prompt "Would you like to play again? (y or n)"
-  answer = gets.chomp
-  answer.downcase == 'y' || answer.downcase == 'yes'
+  answer = user_answer
+  %w(y yes).include?(answer.downcase)
 end
 
 def another_match?
   prompt "Would you like to play another match? (y or n)"
-  answer = gets.chomp
-  answer.downcase == 'y' || answer.downcase == 'yes'
+  answer = user_answer
+  %w(y yes).include?(answer.downcase)
 end
 
 def go_first?
   system 'clear'
-  prompt "Would you like to move first? (y/n)"
-  answer = gets.chomp
-  answer.downcase == 'y' || answer.downcase == 'yes'
+  prompt "Would you like to move first? (y or n)"
+  answer = user_answer
+  %w(y yes).include?(answer.downcase)
 end
 
 def first_player
