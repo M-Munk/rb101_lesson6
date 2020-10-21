@@ -37,14 +37,10 @@ def display_dealer_initial_hand(deck)
   puts "the second card is face down."
 end
 
-def initial_hand(deck, player)
-  deal_card!(deck, player)
-  deal_card!(deck, player)
-end
-
 def deal_initial_hands(deck, player, dealer)
   2.times do
-    initial_hand(deck, dealer)
+    deal_card!(deck, player)
+    deal_card!(deck, dealer)
   end
 end
 
