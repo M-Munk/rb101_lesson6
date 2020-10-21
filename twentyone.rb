@@ -1,5 +1,5 @@
-SUITS = %w[Hearts Spades Clubs Diamonds]
-CARD_VALUES = %w[2 3 4 5 6 7 8 9 10 Jack Queen King Ace]
+SUITS = %w(Hearts Spades Clubs Diamonds)
+CARD_VALUES = %w(2 3 4 5 6 7 8 9 10 Jack Queen King Ace)
 PLAYER = :player
 DEALER = :dealer
 DEALER_MUST_STAY = 17
@@ -24,7 +24,7 @@ end
 
 def display_hand(deck, player)
   puts "#{player == :player ? 'Your' : 'The dealer\'s'} cards are: "
-  hand = deck.select { |_, v| v == player}.keys
+  hand = deck.select { |_, v| v == player }.keys
   hand.each do |card|
     puts "#{card[0]} of #{card[1]}"
   end
@@ -52,15 +52,15 @@ def player_hit?
     break if valid_choice?(answer)
     puts "I'm sorry, I don't understand..."
   end
-  %w[h hit].include?(answer)
+  %w(h hit).include?(answer)
 end
 
 def valid_choice?(answer)
-  %w[h hit s stay].include?(answer)
+  %w(h hit s stay).include?(answer)
 end
 
 def calculate_card_value(deck, player)
-  hand = deck.select { |_, v| v == player}.keys
+  hand = deck.select { |_, v| v == player }.keys
   values = hand.map { |card| card[0] }
   total = 0
   values.each do |value|
@@ -68,15 +68,15 @@ def calculate_card_value(deck, player)
       total += 11
     elsif value.to_i == 0
       total += FACE_CARD
-    else 
+    else
       total += value.to_i
     end
   end
   check_ace(values, total)
 end
 
-def check_ace (card_values, sum)
-  card_values.select { |value| value == 'Ace'}.count.times do
+def check_ace(card_values, sum)
+  card_values.select { |value| value == 'Ace' }.count.times do
     sum -= 10 if sum > HIGHEST_HAND
   end
   sum
@@ -121,7 +121,7 @@ loop do # player loop
   break if player_bust?(deck)
 end
 
-loop do #unless player_bust?(deck) # dealer loop
+loop do # dealer loop -> don't run if player bust
   break unless dealer_hit?(deck)
   deal_card!(deck, DEALER)
 end
