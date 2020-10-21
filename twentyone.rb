@@ -8,7 +8,7 @@ FACE_CARD = 10
 
 def build_deck
   new_deck = Hash.new
-  deck = CARD_VALUES.product(SUITS)
+  deck = CARD_VALUES.product(SUITS).shuffle
   deck.each { |card| new_deck[card] = :deck }
   new_deck
 end
