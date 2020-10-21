@@ -43,8 +43,9 @@ def initial_hand(deck, player)
 end
 
 def deal_initial_hands(deck, player, dealer)
-  initial_hand(deck, player)
-  initial_hand(deck, dealer)
+  2.times do
+    initial_hand(deck, dealer)
+  end
 end
 
 def player_hit?
