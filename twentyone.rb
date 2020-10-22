@@ -151,7 +151,7 @@ end
 
 # ----------- program loop ----------- #
 display_welcome
-loop do 
+loop do
   system 'clear'
   deck = build_deck
   deal_initial_hands(deck, PLAYER, DEALER)
@@ -166,7 +166,7 @@ loop do
   end
 
   unless player_bust?(deck)
-    loop do # dealer loop -> don't run if player bust
+    loop do # dealer loop
       break unless dealer_hit?(deck)
       deal_card!(deck, DEALER)
     end
