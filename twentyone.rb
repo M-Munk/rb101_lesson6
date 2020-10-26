@@ -31,7 +31,7 @@ def display_hand(deck, player)
   puts "+---------------------------+"
   hand = deck.select { |_, v| v == player }.keys
   hand.each do |card|
-    puts "  #{card[0]} of #{card[1]}"
+    puts "     #{card[0]} of #{card[1]}"
   end
   puts ""
   prompt("  Total: #{calculate_card_value(deck, player)}")
@@ -39,7 +39,7 @@ def display_hand(deck, player)
 end
 
 def display_dealer_initial_hand(deck)
-  prompt("The dealer's cards are: ")
+  puts "    The dealer's cards are: "
   puts "+---------------------------+"
   hand = deck.select { |_, v| v == DEALER }.keys
   puts "  #{hand[0][0]} of #{hand[0][1]}"
