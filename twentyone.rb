@@ -27,7 +27,7 @@ def update_deck!(deck, card, player)
 end
 
 def display_hand(deck, player, total)
-  puts "    #{player == :player ? 'Your' : 'The dealer\'s'} cards are: "
+  puts "    #{player == :player ? 'Your' : 'The Dealer\'s'} cards are: "
   puts "+---------------------------+"
   hand = deck.select { |_, v| v == player }.keys
   hand.each do |card|
@@ -145,6 +145,7 @@ def display_welcome
   puts "+---------------------------------------------------+"
   prompt("The Player with the highest value of cards")
   prompt("without going over 21 wins.")
+  prompt("The Player will win any ties.")
   prompt("Good Luck!")
   prompt("Please press enter to continue")
   gets
@@ -154,6 +155,11 @@ end
 def display_goodbye
   prompt("Thank you for playing Twenty-One!")
   prompt("Goodbye!")
+end
+
+def display_dealer_play
+  prompt("The Dealer hits!")
+  puts ''
 end
 
 # ----------- program loop ----------- #
@@ -178,8 +184,10 @@ loop do
   unless bust?(player_score)
     loop do # dealer loop
       break unless dealer_hit?(dealer_score)
+      display_dealer_play
       deal_card!(deck, DEALER)
       dealer_score = calculate_card_value(deck, DEALER)
+      display_hand(deck, DEALER, dealer_score)
     end
   end
 
