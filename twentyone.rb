@@ -26,7 +26,7 @@ def update_deck!(deck, card, player)
   deck[card] = player
 end
 
-def display_hand(deck, player)
+def display_hand(deck, player, total)
   puts "    #{player == :player ? 'Your' : 'The dealer\'s'} cards are: "
   puts "+---------------------------+"
   hand = deck.select { |_, v| v == player }.keys
@@ -34,7 +34,7 @@ def display_hand(deck, player)
     puts "     #{card[0]} of #{card[1]}"
   end
   puts ""
-  prompt("  Total: #{calculate_card_value(deck, player)}")
+  prompt("  Total: #{total}")
   puts ""
 end
 
@@ -92,33 +92,32 @@ def check_ace(card_values, sum)
   sum
 end
 
-def bust?(deck, player)
-  calculate_card_value(deck, player) > HIGHEST_HAND
+def bust?(card_value)
+  card_value > HIGHEST_HAND
 end
 
-def dealer_hit?(deck)
-  calculate_card_value(deck, DEALER) < DEALER_MUST_STAY
+def dealer_hit?(total)
+  total < DEALER_MUST_STAY
 end
 
-def calculate_winner(deck) 
-  player_total = calculate_card_value(deck, PLAYER)
-  dealer_total = calculate_card_value(deck, DEALER)
-  if (!bust?(deck, PLAYER) && player_total >= dealer_total) ||
-     bust?(deck, DEALER)
+def calculate_winner(player_total, dealer_total)
+  if (!bust?(player_total) && player_total >= dealer_total) ||
+     bust?(dealer_total)
     'Player'
   else
     'Dealer'
   end
 end
 
-def display_outcome(deck)
+def display_outcome(deck, player_total, dealer_total)
   puts "+---------------------------+"
-  puts "    The winner is: #{calculate_winner(deck)}"
-  puts "    You Busted!" if bust?(deck, PLAYER)
-  puts "    The Dealer Busted!" if bust?(deck, DEALER)
+  puts "    The winner is: #{calculate_winner(player_total, dealer_total)}"
+  puts "    You Busted!" if bust?(player_total)
+  puts "    The Dealer Busted!" if bust?(dealer_total)
   puts "+---------------------------+"
-  display_hand(deck, PLAYER)
-  display_hand(deck, DEALER)
+  puts ""
+  display_hand(deck, PLAYER, player_total)
+  display_hand(deck, DEALER, dealer_total)
 end
 
 def play_again?
@@ -152,29 +151,39 @@ def display_welcome
   system 'clear'
 end
 
+def display_goodbye
+  prompt("Thank you for playing Twenty-One!")
+  prompt("Goodbye!")
+end
+
 # ----------- program loop ----------- #
 display_welcome
 loop do
   system 'clear'
   deck = build_deck
   deal_initial_hands(deck, PLAYER, DEALER)
-  display_hand(deck, PLAYER)
+  player_score = calculate_card_value(deck, PLAYER)
+  dealer_score = calculate_card_value(deck, DEALER)
+  display_hand(deck, PLAYER, player_score)
   display_dealer_initial_hand(deck)
 
   loop do # player loop
     break unless player_hit?
     deal_card!(deck, PLAYER)
-    display_hand(deck, PLAYER)
-    break if bust?(deck, PLAYER)
+    player_score = calculate_card_value(deck, PLAYER)
+    display_hand(deck, PLAYER, player_score)
+    break if bust?(player_score)
   end
 
-  unless bust?(deck, PLAYER)
+  unless bust?(player_score)
     loop do # dealer loop
-      break unless dealer_hit?(deck)
+      break unless dealer_hit?(dealer_score)
       deal_card!(deck, DEALER)
+      dealer_score = calculate_card_value(deck, DEALER)
     end
   end
 
-  display_outcome(deck)
+  display_outcome(deck, player_score, dealer_score)
   break unless play_again?
 end
+display_goodbye
