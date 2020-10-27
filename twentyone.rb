@@ -7,6 +7,7 @@ HIGHEST_HAND = 21
 FACE_CARD = 10
 LINE = "+---------------------------+"
 WINNING_SCORE = 5
+INITIAL_HAND_SIZE = 2
 
 def prompt(msg)
   puts "==> #{msg}"
@@ -50,7 +51,7 @@ def display_dealer_initial_hand(deck)
 end
 
 def deal_initial_hands(deck, player, dealer)
-  2.times do
+  INITIAL_HAND_SIZE.times do
     deal_card!(deck, player)
     deal_card!(deck, dealer)
   end
@@ -141,9 +142,9 @@ def display_welcome
   prompt("Welcome to Twenty-One: A Simplified Black Jack Game")
   puts "+---------------------------------------------------+"
   prompt("The Player with the highest value of cards")
-  prompt("without going over 21 wins.")
+  prompt("without going over #{HIGHEST_HAND} wins.")
   prompt("The Player will win any ties.")
-  prompt("The first player to win 5 hands wins the round!")
+  prompt("The first player to win #{WINNING_SCORE} hands wins the round!")
   prompt("Good Luck!")
   prompt("Please press enter to continue")
   gets
@@ -212,14 +213,16 @@ end
 def display_match_winner(scrbrd)
   prompt("#{match_winner(scrbrd)} wins the match!")
 end
+
 # ----------- program loop ----------- #
+
 display_welcome
 
-loop do
+loop do # main loop - match
   score = initialize_scoreboard
   clear_screen
 
-  loop do
+  loop do # hand loop
     deck = build_deck
     deal_initial_hands(deck, PLAYER, DEALER)
     player_score = calculate_card_value(deck, PLAYER)
