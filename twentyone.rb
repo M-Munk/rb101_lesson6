@@ -92,8 +92,8 @@ def check_ace(card_values, sum)
   sum
 end
 
-def player_bust?(deck)
-  calculate_card_value(deck, PLAYER) > HIGHEST_HAND
+def bust?(deck, player)
+  calculate_card_value(deck, player) > HIGHEST_HAND
 end
 
 def dealer_hit?(deck)
@@ -103,7 +103,8 @@ end
 def calculate_winner(deck) # needs to check if player or dealer bust
   player_total = calculate_card_value(deck, PLAYER)
   dealer_total = calculate_card_value(deck, DEALER)
-  if dealer_total > HIGHEST_HAND || player_total >= dealer_total
+  if (!bust?(deck, PLAYER) && player_total >= dealer_total) ||
+     bust?(deck, DEALER)
     'Player'
   else
     'Dealer'
@@ -113,6 +114,8 @@ end
 def display_outcome(deck)
   puts "+---------------------------+"
   puts "    The winner is: #{calculate_winner(deck)}"
+  puts "    You Busted!" if bust?(deck, PLAYER)
+  puts "    The Dealer Busted!" if bust?(deck, DEALER)
   puts "+---------------------------+"
   display_hand(deck, PLAYER)
   display_hand(deck, DEALER)
@@ -144,7 +147,7 @@ def display_welcome
   prompt("The Player with the highest value of cards")
   prompt("without going over 21 wins.")
   prompt("Good Luck!")
-  prompt("Please press any key and enter to continue")
+  prompt("Please press enter to continue")
   gets
   system 'clear'
 end
@@ -162,10 +165,10 @@ loop do
     break unless player_hit?
     deal_card!(deck, PLAYER)
     display_hand(deck, PLAYER)
-    break if player_bust?(deck)
+    break if bust?(deck, PLAYER)
   end
 
-  unless player_bust?(deck)
+  unless bust?(deck, PLAYER)
     loop do # dealer loop
       break unless dealer_hit?(deck)
       deal_card!(deck, DEALER)
