@@ -6,6 +6,7 @@ DEALER_MUST_STAY = 17
 HIGHEST_HAND = 21
 FACE_CARD = 10
 LINE = "+---------------------------+"
+WINNING_SCORE = 5
 
 def prompt(msg)
   puts "==> #{msg}"
@@ -122,13 +123,8 @@ def display_outcome(deck, player_total, dealer_total)
 end
 
 def play_again?
-  prompt("  Would you like to play again? (y/n)")
-  answer = ''
-  loop do
-    answer = gets.chomp
-    break if valid_answer?(answer)
-    prompt("I'm sorry, I don't understand.")
-  end
+  prompt("Would you like to play again? (y/n)")
+  answer = user_answer
   valid_yes?(answer)
 end
 
@@ -141,7 +137,7 @@ def valid_yes?(ans)
 end
 
 def display_welcome
-  system 'clear'
+  clear_screen
   prompt("Welcome to Twenty-One: A Simplified Black Jack Game")
   puts "+---------------------------------------------------+"
   prompt("The Player with the highest value of cards")
@@ -151,7 +147,7 @@ def display_welcome
   prompt("Good Luck!")
   prompt("Please press enter to continue")
   gets
-  system 'clear'
+  clear_screen
 end
 
 def display_goodbye
@@ -182,39 +178,83 @@ def display_score(scrbrd)
   puts ""
 end
 
+def match_winner(scrbrd)
+  if scrbrd[PLAYER] == WINNING_SCORE
+    return 'Player'
+  elsif scrbrd[DEALER] == WINNING_SCORE
+    return 'Dealer'
+  end
+  nil
+end
+
+def winner?(scrbrd)
+  !!match_winner(scrbrd)
+end
+
+def another_match?
+  prompt("Would you like to play another match? (y/n)")
+  answer = user_answer
+  valid_yes?(answer)
+end
+
+def user_answer
+  loop do
+    answer = gets.chomp
+    return answer if valid_answer?(answer)
+    prompt "I'm sorry, I don't understand your answer."
+  end
+end
+
+def clear_screen
+  system 'clear'
+end
+
+def display_match_winner(scrbrd)
+  prompt("#{match_winner(scrbrd)} wins the match!")
+end
 # ----------- program loop ----------- #
 display_welcome
-score = initialize_scoreboard
+
 loop do
-  system 'clear'
-  deck = build_deck
-  deal_initial_hands(deck, PLAYER, DEALER)
-  player_score = calculate_card_value(deck, PLAYER)
-  dealer_score = calculate_card_value(deck, DEALER)
-  display_hand(deck, PLAYER, player_score)
-  display_dealer_initial_hand(deck)
+  score = initialize_scoreboard
+  clear_screen
 
-  loop do # player loop
-    break unless player_hit?
-    deal_card!(deck, PLAYER)
+  loop do
+    deck = build_deck
+    deal_initial_hands(deck, PLAYER, DEALER)
     player_score = calculate_card_value(deck, PLAYER)
+    dealer_score = calculate_card_value(deck, DEALER)
     display_hand(deck, PLAYER, player_score)
-    break if bust?(player_score)
-  end
+    display_dealer_initial_hand(deck)
 
-  unless bust?(player_score)
-    loop do # dealer loop
-      break unless dealer_hit?(dealer_score)
-      display_dealer_play
-      deal_card!(deck, DEALER)
-      dealer_score = calculate_card_value(deck, DEALER)
-      display_hand(deck, DEALER, dealer_score)
+    loop do # player loop
+      break unless player_hit?
+      deal_card!(deck, PLAYER)
+      player_score = calculate_card_value(deck, PLAYER)
+      display_hand(deck, PLAYER, player_score)
+      break if bust?(player_score)
     end
+
+    unless bust?(player_score)
+      loop do # dealer loop
+        break unless dealer_hit?(dealer_score)
+        display_dealer_play
+        deal_card!(deck, DEALER)
+        dealer_score = calculate_card_value(deck, DEALER)
+        display_hand(deck, DEALER, dealer_score)
+      end
+    end
+
+    display_outcome(deck, player_score, dealer_score)
+    update_score!(score, player_score, dealer_score)
+    display_score(score)
+    break if winner?(score)
+    break unless play_again?
+    clear_screen
   end
 
-  display_outcome(deck, player_score, dealer_score)
-  update_score!(score, player_score, dealer_score)
-  display_score(score)
-  break unless play_again?
+  display_match_winner(score)
+  break unless another_match?
 end
+
 display_goodbye
