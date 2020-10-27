@@ -256,7 +256,7 @@ loop do # main loop - match
     clear_screen
   end
 
-  display_match_winner(score)
+  display_match_winner(score) if winner?(score)
   break unless another_match?
 end
 
