@@ -5,6 +5,7 @@ DEALER = :dealer
 DEALER_MUST_STAY = 17
 HIGHEST_HAND = 21
 FACE_CARD = 10
+LINE = "+---------------------------+"
 
 def prompt(msg)
   puts "==> #{msg}"
@@ -28,7 +29,7 @@ end
 
 def display_hand(deck, player, total)
   puts "    #{player == :player ? 'Your' : 'The Dealer\'s'} cards are: "
-  puts "+---------------------------+"
+  puts LINE
   hand = deck.select { |_, v| v == player }.keys
   hand.each do |card|
     puts "     #{card[0]} of #{card[1]}"
@@ -40,7 +41,7 @@ end
 
 def display_dealer_initial_hand(deck)
   puts "    The dealer's cards are: "
-  puts "+---------------------------+"
+  puts LINE
   hand = deck.select { |_, v| v == DEALER }.keys
   puts "  #{hand[0][0]} of #{hand[0][1]}"
   puts "  the second card is face down."
@@ -110,11 +111,11 @@ def calculate_winner(player_total, dealer_total)
 end
 
 def display_outcome(deck, player_total, dealer_total)
-  puts "+---------------------------+"
+  puts LINE
   puts "    The winner is: #{calculate_winner(player_total, dealer_total)}"
   puts "    You Busted!" if bust?(player_total)
   puts "    The Dealer Busted!" if bust?(dealer_total)
-  puts "+---------------------------+"
+  puts LINE
   puts ""
   display_hand(deck, PLAYER, player_total)
   display_hand(deck, DEALER, dealer_total)
@@ -146,6 +147,7 @@ def display_welcome
   prompt("The Player with the highest value of cards")
   prompt("without going over 21 wins.")
   prompt("The Player will win any ties.")
+  prompt("The first player to win 5 hands wins the round!")
   prompt("Good Luck!")
   prompt("Please press enter to continue")
   gets
@@ -162,8 +164,27 @@ def display_dealer_play
   puts ''
 end
 
+def initialize_scoreboard
+  { player: 0, dealer: 0 }
+end
+
+def update_score!(scrbrd, player_total, dealer_total)
+  winner = calculate_winner(player_total, dealer_total).downcase.to_sym
+  scrbrd[winner] += 1
+end
+
+def display_score(scrbrd)
+  puts LINE
+  puts "Match Score:"
+  puts "Player: #{scrbrd[PLAYER]}"
+  puts "Dealer: #{scrbrd[DEALER]}"
+  puts LINE
+  puts ""
+end
+
 # ----------- program loop ----------- #
 display_welcome
+score = initialize_scoreboard
 loop do
   system 'clear'
   deck = build_deck
@@ -192,6 +213,8 @@ loop do
   end
 
   display_outcome(deck, player_score, dealer_score)
+  update_score!(score, player_score, dealer_score)
+  display_score(score)
   break unless play_again?
 end
 display_goodbye
