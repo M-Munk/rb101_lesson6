@@ -100,7 +100,7 @@ def dealer_hit?(deck)
   calculate_card_value(deck, DEALER) < DEALER_MUST_STAY
 end
 
-def calculate_winner(deck) # needs to check if player or dealer bust
+def calculate_winner(deck) 
   player_total = calculate_card_value(deck, PLAYER)
   dealer_total = calculate_card_value(deck, DEALER)
   if (!bust?(deck, PLAYER) && player_total >= dealer_total) ||
